@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
@@ -14,6 +15,8 @@ namespace kliensappkeszlet
     {
         private readonly HotcakesService _hotcakes = new HotcakesService();
         private List<InventoryDisplayModel> _displayList = new List<InventoryDisplayModel>();
+
+        private BindingList<InventoryDisplayModel> _massUpdateList = new BindingList<InventoryDisplayModel>();
 
         public Form1()
         {
@@ -68,10 +71,19 @@ namespace kliensappkeszlet
 
         private void BeallitTablazatot()
         {
+
+
+
+
+
             // Rejtett azonosítók (a kódban elérhetõek, de a táblázatban nem látszanak)
             if (dgvInventory.Columns["InventoryBvin"] != null) dgvInventory.Columns["InventoryBvin"].Visible = false;
             if (dgvInventory.Columns["ProductBvin"] != null) dgvInventory.Columns["ProductBvin"].Visible = false;
             dgvInventory.Columns["Updatable"].Visible = false;
+
+            if (dgvMassUpdate.Columns["InventoryBvin"] != null) dgvMassUpdate.Columns["InventoryBvin"].Visible = false;
+            if (dgvMassUpdate.Columns["ProductBvin"] != null) dgvMassUpdate.Columns["ProductBvin"].Visible = false;
+            dgvMassUpdate.Columns["Updatable"].Visible = false;
 
             // Látható oszlopok beállítása
             dgvInventory.Columns["Sku"].HeaderText = "Cikkszám";
@@ -165,7 +177,7 @@ namespace kliensappkeszlet
         {
             if (dgvInventory.CurrentRow != null && dgvInventory.CurrentRow.DataBoundItem is InventoryDisplayModel selected)
             {
-                // Megjelenítjük a kijelölt termék nevét és jelenlegi mennyiségét a beviteli mezõkben
+                
                 lblSelectedProduct.Text = $"Kijelölt Termék: {selected.ProductName}";
                 txtQuantity.Text = selected.QuantityOnHand.ToString();
             }
@@ -197,7 +209,61 @@ namespace kliensappkeszlet
             }
         }
 
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            string filter = txtSearch.Text.ToLower();
 
+            // neve vagy a cikkszám alapján
+            var filteredList = _displayList.Where(x =>
+                (x.ProductName != null && x.ProductName.ToLower().Contains(filter)) ||
+                (x.Sku != null && x.Sku.ToLower().Contains(filter))
+            ).ToList();
+
+            
+            dgvInventory.DataSource = filteredList;
+
+            
+            BeallitTablazatot();
+            EllenorizAlacsonyKeszletet();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dgvMassUpdate.DataSource = _massUpdateList;
+
+            
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvInventory.SelectedRows)
+            {
+                var item = (InventoryDisplayModel)row.DataBoundItem;
+
+                // benne van a listában?
+                if (!_massUpdateList.Any(x => x.InventoryBvin == item.InventoryBvin))
+                {
+                    _massUpdateList.Add(item);
+                }
+            }
+
+            BeallitTablazatot();
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            // A kijelölt sorokat a törli kis listából
+            List<InventoryDisplayModel> toRemove = new List<InventoryDisplayModel>();
+            foreach (DataGridViewRow row in dgvMassUpdate.SelectedRows)
+            {
+                toRemove.Add((InventoryDisplayModel)row.DataBoundItem);
+            }
+
+            foreach (var item in toRemove)
+            {
+                _massUpdateList.Remove(item);
+            }
+        }
     }
 
     // --- ADATMODELLEK ---
