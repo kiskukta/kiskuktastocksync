@@ -47,7 +47,8 @@ namespace kliensappkeszlet
                                     QuantityOnHand = i.QuantityOnHand,
                                     QuantityReserved = i.QuantityReserved,
                                     AvailableForSale = i.QuantityOnHand - i.QuantityReserved,
-                                    LowStockPoint = i.LowStockPoint
+                                    LowStockPoint = i.LowStockPoint,
+                                    Updatable = false
                                 }).ToList();
 
                 dgvInventory.DataSource = _displayList;
@@ -70,6 +71,7 @@ namespace kliensappkeszlet
             // Rejtett azonosítók (a kódban elérhetõek, de a táblázatban nem látszanak)
             if (dgvInventory.Columns["InventoryBvin"] != null) dgvInventory.Columns["InventoryBvin"].Visible = false;
             if (dgvInventory.Columns["ProductBvin"] != null) dgvInventory.Columns["ProductBvin"].Visible = false;
+            dgvInventory.Columns["Updatable"].Visible = false;
 
             // Látható oszlopok beállítása
             dgvInventory.Columns["Sku"].HeaderText = "Cikkszám";
@@ -88,6 +90,7 @@ namespace kliensappkeszlet
 
             dgvInventory.Columns["QuantityOnHand"].HeaderText = "Raktáron (Fizikai)";
             dgvInventory.Columns["QuantityOnHand"].DefaultCellStyle.BackColor = Color.LightYellow;
+            dgvInventory.Columns["QuantityOnHand"].ReadOnly = true;
             dgvInventory.Columns["QuantityOnHand"].DisplayIndex = 3;
 
             dgvInventory.Columns["QuantityReserved"].HeaderText = "Lefoglalva";
@@ -101,6 +104,10 @@ namespace kliensappkeszlet
 
             dgvInventory.Columns["LowStockPoint"].HeaderText = "Minimum szint";
             dgvInventory.Columns["LowStockPoint"].DisplayIndex = 6;
+
+
+            dgvInventory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvInventory.MultiSelect = true; // majd több termék kijelölésére
         }
 
         private void EllenorizAlacsonyKeszletet()
@@ -131,14 +138,15 @@ namespace kliensappkeszlet
 
             try
             {
-                foreach (var item in _displayList)
+                foreach (var item in _displayList.Where(o => o.Updatable))
                 {
-                    bool success = await _hotcakes.UpdateInventoryAsync(item.InventoryBvin, item.QuantityOnHand, item.LowStockPoint);
+                    bool success = await _hotcakes.UpdateInventoryAsync(item.InventoryBvin, item.ProductBvin, item.QuantityOnHand, item.LowStockPoint);
                     if (success) sikeres++;
+                    item.Updatable = false;
                 }
                 MessageBox.Show($"Kész! {sikeres} tétel frissítve.", "Sikeres mentés", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                
+
                 EllenorizAlacsonyKeszletet();
             }
             catch (Exception ex)
@@ -151,6 +159,45 @@ namespace kliensappkeszlet
                 btnSave.Enabled = true;
             }
         }
+
+
+        private void dgvInventory_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvInventory.CurrentRow != null && dgvInventory.CurrentRow.DataBoundItem is InventoryDisplayModel selected)
+            {
+                // Megjelenítjük a kijelölt termék nevét és jelenlegi mennyiségét a beviteli mezõkben
+                lblSelectedProduct.Text = $"Kijelölt Termék: {selected.ProductName}";
+                txtQuantity.Text = selected.QuantityOnHand.ToString();
+            }
+        }
+
+
+        private void btnApplyChange_Click(object sender, EventArgs e)
+        {
+            if (dgvInventory.SelectedRows.Count == 0) return;
+
+            if (int.TryParse(txtQuantity.Text, out int newQty))
+            {
+
+                foreach (DataGridViewRow row in dgvInventory.SelectedRows)
+                {
+                    if (row.DataBoundItem is InventoryDisplayModel item)
+                    {
+                        item.QuantityOnHand = newQty;
+
+                        item.AvailableForSale = item.QuantityOnHand - item.QuantityReserved;
+
+                        item.Updatable = true;
+                    }
+                }
+
+
+                dgvInventory.Refresh();
+                EllenorizAlacsonyKeszletet();
+            }
+        }
+
+
     }
 
     // --- ADATMODELLEK ---
@@ -166,6 +213,7 @@ namespace kliensappkeszlet
         public int QuantityReserved { get; set; }
         public int AvailableForSale { get; set; }
         public int LowStockPoint { get; set; }
+        public bool Updatable { get; set; }
     }
 
     public class HotcakesInventoryResponse { public List<InventoryInfo> Content { get; set; } }
@@ -211,12 +259,12 @@ namespace kliensappkeszlet
             return JsonConvert.DeserializeObject<HotcakesProductResponse>(json)?.Content?.Products ?? new List<ProductInfo>();
         }
 
-        public async Task<bool> UpdateInventoryAsync(string inventoryBvin, int qty, int lowStock)
+        public async Task<bool> UpdateInventoryAsync(string inventoryBvin,string productBvin, int qty, int lowStock)
         {
-            var data = new { Bvin = inventoryBvin, QuantityOnHand = qty, LowStockPoint = lowStock };
+            var data = new { Bvin = inventoryBvin, ProductBvin= productBvin, QuantityOnHand = qty, LowStockPoint = lowStock };
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var res = await _client.PostAsync($"{_baseUrl}productinventory/{inventoryBvin}?key={_apiKey}", content);
+            var res = await _client.PostAsync($"{_baseUrl}productinventory?key={_apiKey}", content);
             return res.IsSuccessStatusCode;
         }
     }
