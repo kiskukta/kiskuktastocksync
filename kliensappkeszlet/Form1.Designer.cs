@@ -36,7 +36,7 @@
             lblSelectedProduct = new Label();
             Készletek = new TabControl();
             tabPage1 = new TabPage();
-            numericUpDown3 = new NumericUpDown();
+            numPrice = new NumericUpDown();
             label9 = new Label();
             label7 = new Label();
             listBox2 = new ListBox();
@@ -57,16 +57,21 @@
             btnMassDecrease = new Button();
             label3 = new Label();
             tabPage4 = new TabPage();
+            pnlStatCard = new Panel();
+            lblTopProducts = new Label();
+            lblStatTitle = new Label();
             txtSearch = new TextBox();
             label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
             Készletek.SuspendLayout();
             tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numPrice).BeginInit();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numQtyChange).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numPriceChange).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvMassUpdate).BeginInit();
+            tabPage4.SuspendLayout();
+            pnlStatCard.SuspendLayout();
             SuspendLayout();
             // 
             // btnLoad
@@ -141,7 +146,7 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.Transparent;
-            tabPage1.Controls.Add(numericUpDown3);
+            tabPage1.Controls.Add(numPrice);
             tabPage1.Controls.Add(label9);
             tabPage1.Controls.Add(label7);
             tabPage1.Controls.Add(listBox2);
@@ -159,12 +164,13 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Egyedi készlet/ár";
             // 
-            // numericUpDown3
+            // numPrice
             // 
-            numericUpDown3.Location = new Point(158, 144);
-            numericUpDown3.Name = "numericUpDown3";
-            numericUpDown3.Size = new Size(117, 23);
-            numericUpDown3.TabIndex = 11;
+            numPrice.Location = new Point(158, 144);
+            numPrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            numPrice.Name = "numPrice";
+            numPrice.Size = new Size(117, 23);
+            numPrice.TabIndex = 11;
             // 
             // label9
             // 
@@ -327,6 +333,7 @@
             btnSaveMassChanges.TabIndex = 4;
             btnSaveMassChanges.Text = "Módosítás mentése";
             btnSaveMassChanges.UseVisualStyleBackColor = true;
+            btnSaveMassChanges.Click += btnSaveMassChanges_Click;
             // 
             // btnMassIncrease
             // 
@@ -361,6 +368,7 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(pnlStatCard);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
@@ -368,6 +376,35 @@
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Statisztika";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // pnlStatCard
+            // 
+            pnlStatCard.BackColor = Color.AntiqueWhite;
+            pnlStatCard.Controls.Add(lblTopProducts);
+            pnlStatCard.Controls.Add(lblStatTitle);
+            pnlStatCard.Location = new Point(33, 87);
+            pnlStatCard.Name = "pnlStatCard";
+            pnlStatCard.Size = new Size(430, 295);
+            pnlStatCard.TabIndex = 0;
+            // 
+            // lblTopProducts
+            // 
+            lblTopProducts.AutoSize = true;
+            lblTopProducts.Location = new Point(13, 47);
+            lblTopProducts.Name = "lblTopProducts";
+            lblTopProducts.Size = new Size(44, 15);
+            lblTopProducts.TabIndex = 1;
+            lblTopProducts.Text = "label10";
+            // 
+            // lblStatTitle
+            // 
+            lblStatTitle.AutoSize = true;
+            lblStatTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            lblStatTitle.Location = new Point(5, 13);
+            lblStatTitle.Name = "lblStatTitle";
+            lblStatTitle.Size = new Size(331, 21);
+            lblStatTitle.TabIndex = 0;
+            lblStatTitle.Text = "Top 5 Leggyorsabban Fogyó Termék (Heti)";
             // 
             // txtSearch
             // 
@@ -405,12 +442,15 @@
             Készletek.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numPrice).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numQtyChange).EndInit();
             ((System.ComponentModel.ISupportInitialize)numPriceChange).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvMassUpdate).EndInit();
+            tabPage4.ResumeLayout(false);
+            pnlStatCard.ResumeLayout(false);
+            pnlStatCard.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -446,7 +486,10 @@
         private NumericUpDown numPriceChange;
         private NumericUpDown numQtyChange;
         private Label label8;
-        private NumericUpDown numericUpDown3;
+        private NumericUpDown numPrice;
         private Label label9;
+        private Panel pnlStatCard;
+        private Label lblStatTitle;
+        private Label lblTopProducts;
     }
 }
