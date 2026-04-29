@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
+
 namespace kliensappkeszlet
 {
     public partial class Form1 : Form
@@ -21,7 +22,119 @@ namespace kliensappkeszlet
         public Form1()
         {
             InitializeComponent();
+            ApplyTheme();
         }
+
+        private void ApplyTheme()
+        {
+            // --- Központi színpaletta ---
+            Color baseBeige = Color.FromArgb(235, 230, 215);      // Form és alap háttér
+            Color headerBrown = Color.FromArgb(75, 54, 50);       // Sötétbarna (Fejlécek, Textboxok)
+            Color mauveButton = Color.FromArgb(154, 126, 141);    // Mályva (Gombok)
+            Color lightTextForDarkBg = Color.FromArgb(235, 225, 215); // Világos szöveg sötét háttérre
+
+            // 1. Az ablak (Form1) alap háttere
+            this.BackColor = Color.MistyRose;
+
+            // 2. Táblázatok (DGV) egyedi színezése
+            ApplyDataGridViewTheme(dgvInventory);
+            ApplyDataGridViewTheme(dgvMassUpdate);
+
+            // 3. Univerzális stílus alkalmazása minden egyéb vezérlõre (Gombok, Textboxok, stb.)
+            // Ez a függvény végigmegy az összes elemen, még akkor is, ha azok panelekben vannak.
+            ApplyStyleToAllControls(this, headerBrown, mauveButton, lightTextForDarkBg);
+        }
+
+        // Segédmetódus a táblázatok egységesítéséhez
+        private void ApplyDataGridViewTheme(DataGridView dgv)
+        {
+            if (dgv == null) return;
+
+            Color baseBeige = Color.FromArgb(240, 240, 215);
+            Color altRowBeige = Color.FromArgb(225, 215, 205); 
+            Color gridLineColor = Color.FromArgb(205, 195, 185);
+            Color selectionColor = Color.FromArgb(200, 180, 190);
+            Color headerBrown = Color.FromArgb(75, 54, 50);
+
+            dgv.BackgroundColor = baseBeige;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.EnableHeadersVisualStyles = false; // Engedélyezi az egyedi fejlécszínt
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.RowHeadersVisible = false;
+
+            // Rácsvonalak: Csak vízszintes, a függõleges "csíkocskák" nélkül
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.GridColor = gridLineColor;
+            dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+            // Sorok stílusa
+            dgv.DefaultCellStyle.BackColor = baseBeige;
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
+            dgv.DefaultCellStyle.SelectionBackColor = selectionColor;
+            dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9.5f);
+
+
+            // Fejléc stílusa
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = headerBrown;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
+            dgv.ColumnHeadersHeight = 45;
+
+            // Minden oszlopnál kényszerítjük a függõleges vonal eltüntetését
+            foreach (DataGridViewColumn col in dgv.Columns)
+            {
+                col.DividerWidth = 0;
+            }
+        }
+
+        // Rekurzív segédmetódus, ami minden elemen végigmegy
+        private void ApplyStyleToAllControls(Control container, Color darkBg, Color btnBg, Color lightText)
+        {
+            foreach (Control c in container.Controls)
+            {
+                // Gombok stílusa
+                if (c is Button btn)
+                {
+                    btn.BackColor = btnBg;
+                    btn.ForeColor = Color.White;
+                    btn.FlatStyle = FlatStyle.Flat;
+                    btn.FlatAppearance.BorderSize = 0;
+                    btn.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
+                    btn.Cursor = Cursors.Hand;
+                }
+                // Szövegdobozok stílusa
+                else if (c is TextBox txt)
+                {
+                    txt.BackColor = darkBg;
+                    txt.ForeColor = lightText;
+                    txt.BorderStyle = BorderStyle.FixedSingle;
+                    txt.Font = new Font("Segoe UI", 10f);
+                }
+                // Számbeállítók stílusa
+                else if (c is NumericUpDown num)
+                {
+                    num.BackColor = darkBg;
+                    num.ForeColor = lightText;
+                    num.BorderStyle = BorderStyle.FixedSingle;
+                    num.Font = new Font("Segoe UI", 10f);
+                }
+                // Feliratok stílusa (hogy ne legyen fehér hátterük)
+                else if (c is Label lbl)
+                {
+                    lbl.BackColor = Color.Transparent;
+                    lbl.ForeColor = Color.FromArgb(60, 60, 60);
+                }
+
+                // Ha az adott elem egy Panel vagy GroupBox, abba is "benézünk"
+                if (c.HasChildren)
+                {
+                    ApplyStyleToAllControls(c, darkBg, btnBg, lightText);
+                }
+            }
+        }
+
+
 
         private async void btnLoad_Click(object sender, EventArgs e)
         {
@@ -130,12 +243,14 @@ namespace kliensappkeszlet
                 {
                     if (item.AvailableForSale <= item.LowStockPoint)
                     {
-                        row.DefaultCellStyle.BackColor = Color.MistyRose;
-                        row.Cells["AvailableForSale"].Style.ForeColor = Color.Red;
+                        // Halvány pirosas/rózsaszín háttér a kép stílusában
+                        row.DefaultCellStyle.BackColor = Color.FromArgb(255, 235, 235);
+                        row.Cells["AvailableForSale"].Style.ForeColor = Color.Brown;
+                        row.Cells["AvailableForSale"].Style.Font = new Font(dgvInventory.Font, FontStyle.Bold);
                     }
                     else
                     {
-                        row.DefaultCellStyle.BackColor = Color.White;
+                        row.DefaultCellStyle.BackColor = Color.FromArgb(245, 239, 231);
                         row.Cells["AvailableForSale"].Style.ForeColor = Color.Black;
                     }
                 }
@@ -177,7 +292,7 @@ namespace kliensappkeszlet
         {
             if (dgvInventory.CurrentRow != null && dgvInventory.CurrentRow.DataBoundItem is InventoryDisplayModel selected)
             {
-                
+
                 lblSelectedProduct.Text = $"Kijelölt Termék: {selected.ProductName}";
                 txtQuantity.Text = selected.QuantityOnHand.ToString();
             }
@@ -219,10 +334,10 @@ namespace kliensappkeszlet
                 (x.Sku != null && x.Sku.ToLower().Contains(filter))
             ).ToList();
 
-            
+
             dgvInventory.DataSource = filteredList;
 
-            
+
             BeallitTablazatot();
             EllenorizAlacsonyKeszletet();
         }
@@ -231,7 +346,9 @@ namespace kliensappkeszlet
         {
             dgvMassUpdate.DataSource = _massUpdateList;
 
-            
+
+
+
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -263,6 +380,51 @@ namespace kliensappkeszlet
             {
                 _massUpdateList.Remove(item);
             }
+        }
+
+        private void btnMassIncrease_Click(object sender, EventArgs e)
+        {
+            decimal pricePercent = numPriceChange.Value; // Az Árváltozás 
+            int qtyAmount = (int)numQtyChange.Value;    // A Mennyiségváltozás 
+
+            foreach (var item in _massUpdateList)
+            {
+                // 1. Ár növelése százalékkal és kerekítés egészre
+                if (pricePercent > 0)
+                {
+                    decimal factor = 1 + (pricePercent / 100);
+                    item.Price = Math.Round(item.Price * factor);
+                }
+
+                // 2. Készlet növelése darabszámmal
+                item.QuantityOnHand += qtyAmount;
+
+                item.Updatable = true;
+            }
+            dgvMassUpdate.Refresh();
+        }
+
+        private void btnMassDecrease_Click(object sender, EventArgs e)
+        {
+            decimal pricePercent = numPriceChange.Value;
+            int qtyAmount = (int)numQtyChange.Value;
+
+            foreach (var item in _massUpdateList)
+            {
+                // 1. Ár csökkentése százalékkal, kerekítés és minimum 0
+                if (pricePercent > 0)
+                {
+                    decimal factor = 1 - (pricePercent / 100);
+                    decimal ujAr = Math.Round(item.Price * factor);
+                    item.Price = Math.Max(0, ujAr);
+                }
+
+                // 2. Készlet csökkentése (0-ig)
+                item.QuantityOnHand = Math.Max(0, item.QuantityOnHand - qtyAmount);
+
+                item.Updatable = true;
+            }
+            dgvMassUpdate.Refresh();
         }
     }
 
