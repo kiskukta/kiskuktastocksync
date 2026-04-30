@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using TheArtOfDevHtmlRenderer.Adapters;
 
 
+
 namespace kliensappkeszlet
 {
     public partial class Form1 : Form
@@ -279,10 +280,12 @@ namespace kliensappkeszlet
             if (dgvInventory.Columns["InventoryBvin"] != null) dgvInventory.Columns["InventoryBvin"].Visible = false;
             if (dgvInventory.Columns["ProductBvin"] != null) dgvInventory.Columns["ProductBvin"].Visible = false;
             dgvInventory.Columns["Updatable"].Visible = false;
+            dgvInventory.Columns["ProductInfo"].Visible = false;
 
             if (dgvMassUpdate.Columns["InventoryBvin"] != null) dgvMassUpdate.Columns["InventoryBvin"].Visible = false;
             if (dgvMassUpdate.Columns["ProductBvin"] != null) dgvMassUpdate.Columns["ProductBvin"].Visible = false;
             dgvMassUpdate.Columns["Updatable"].Visible = false;
+            dgvMassUpdate.Columns["ProductInfo"].Visible = false;
 
             // Látható oszlopok beállítása
             dgvInventory.Columns["Sku"].HeaderText = "Cikkszám";
@@ -517,6 +520,7 @@ namespace kliensappkeszlet
                     decimal factor = 1 - (pricePercent / 100);
                     decimal ujAr = Math.Round(item.Price * factor);
                     item.Price = Math.Max(0, ujAr);
+                    item.ProductInfo.SitePrice = item.Price;
                 }
 
                 // 2. Készlet csökkentése (0-ig)
@@ -665,6 +669,43 @@ namespace kliensappkeszlet
         public string ProductName { get; set; }
         public string Sku { get; set; }
         public decimal SitePrice { get; set; }
+
+        public string ProductTypeId { get; set; }
+        public decimal ListPrice { get; set; }
+        public decimal SiteCost { get; set; }
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
+        public string MetaTitle { get; set; }
+        public bool TaxExempt { get; set; }
+        public int TaxSchedule { get; set; }
+        public string ImageFileSmall { get; set; }
+        public string ImageFileSmallAlternateText { get; set; }
+        public string ImageFileMedium { get; set; }
+        public string ImageFileMediumAlternateText { get; set; }
+        public string ShortDescription { get; set; }
+        public string LongDescription { get; set; }
+        public int ShippingMode { get; set; }
+        public int Status { get; set; }
+        public int MinimumQty { get; set; }
+        public string ManufacturerId { get; set; }
+        public string VendorId { get; set; }
+        public string UrlSlug { get; set; }
+        public int InventoryMode { get; set; }
+        public bool IsAvailableForSale { get; set; }
+        public bool Featured { get; set; }
+        public bool? AllowReviews { get; set; }
+        public int StoreId { get; set; }
+        public bool IsSearchable { get; set; }
+        public bool GiftWrapAllowed { get; set; }
+        public decimal GiftWrapPrice { get; set; }
+        public decimal ShippingCharge { get; set; }
+        public bool AllowUpcharge { get; set; }
+        public decimal UpchargeAmount { get; set; }
+        public string UpchargeUnit { get; set; }
+        public string Keywords { get; set; }
+        public string PreContentColumnId { get; set; }
+        public string PostContentColumnId { get; set; }
+        
     }
 
     // --- API SZERVIZ ---
@@ -685,13 +726,12 @@ namespace kliensappkeszlet
         public async Task<bool> UpdateProductPriceAsync(ProductInfo pinfo)
         {
             
-            //var data = new { Bvin = productBvin, Sku = sku, ProductName= productName, SitePrice = newPrice, StoreId = 1 };
-            var json = JsonConvert.SerializeObject(pinfo);
+            var data = new { Bvin = pinfo.Bvin, Sku=pinfo.Sku, ProductName = pinfo.ProductName, SitePrice = pinfo.SitePrice, StoreId = 1 };
+            var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            //var res = await _client.PostAsync($"{_baseUrl}products?key={_apiKey}", content);
-            //return res.IsSuccessStatusCode;
-            return true;
+            var res = await _client.PostAsync($"{_baseUrl}products?key={_apiKey}", content);
+            return res.IsSuccessStatusCode;
         }
 
 

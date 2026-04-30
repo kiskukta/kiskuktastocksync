@@ -42,22 +42,22 @@
             label1 = new Label();
             tabPage2 = new TabPage();
             numQtyChange = new NumericUpDown();
-            label8 = new Label();
-            numPriceChange = new NumericUpDown();
-            label5 = new Label();
-            label4 = new Label();
-            listBox1 = new ListBox();
             btnRemove = new Button();
             btnAdd = new Button();
+            label8 = new Label();
             dgvMassUpdate = new DataGridView();
             btnSaveMassChanges = new Button();
+            numPriceChange = new NumericUpDown();
             btnMassIncrease = new Button();
+            label5 = new Label();
             btnMassDecrease = new Button();
             label3 = new Label();
             tabPage4 = new TabPage();
             pnlStatCard = new Panel();
             lblTopProducts = new Label();
             lblStatTitle = new Label();
+            label4 = new Label();
+            listBox1 = new ListBox();
             txtSearch = new TextBox();
             label2 = new Label();
             btnPrev = new Button();
@@ -69,8 +69,8 @@
             ((System.ComponentModel.ISupportInitialize)numPrice).BeginInit();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numQtyChange).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numPriceChange).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvMassUpdate).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numPriceChange).BeginInit();
             tabPage4.SuspendLayout();
             pnlStatCard.SuspendLayout();
             SuspendLayout();
@@ -127,9 +127,9 @@
             lblSelectedProduct.Font = new Font("Segoe UI", 11F);
             lblSelectedProduct.Location = new Point(18, 79);
             lblSelectedProduct.Name = "lblSelectedProduct";
-            lblSelectedProduct.Size = new Size(50, 20);
+            lblSelectedProduct.Size = new Size(136, 20);
             lblSelectedProduct.TabIndex = 5;
-            lblSelectedProduct.Text = "label1";
+            lblSelectedProduct.Text = "Kiválasztott termék";
             // 
             // Készletek
             // 
@@ -159,7 +159,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(647, 305);
+            tabPage1.Size = new Size(739, 430);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Egyedi készlet/ár";
             // 
@@ -205,14 +205,14 @@
             // tabPage2
             // 
             tabPage2.Controls.Add(numQtyChange);
-            tabPage2.Controls.Add(label8);
-            tabPage2.Controls.Add(numPriceChange);
-            tabPage2.Controls.Add(label5);
             tabPage2.Controls.Add(btnRemove);
             tabPage2.Controls.Add(btnAdd);
+            tabPage2.Controls.Add(label8);
             tabPage2.Controls.Add(dgvMassUpdate);
             tabPage2.Controls.Add(btnSaveMassChanges);
+            tabPage2.Controls.Add(numPriceChange);
             tabPage2.Controls.Add(btnMassIncrease);
+            tabPage2.Controls.Add(label5);
             tabPage2.Controls.Add(btnMassDecrease);
             tabPage2.Controls.Add(label3);
             tabPage2.Location = new Point(4, 24);
@@ -225,91 +225,55 @@
             // 
             // numQtyChange
             // 
-            numQtyChange.Location = new Point(147, 99);
+            numQtyChange.Location = new Point(565, 133);
             numQtyChange.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numQtyChange.Name = "numQtyChange";
             numQtyChange.Size = new Size(125, 23);
             numQtyChange.TabIndex = 13;
             // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Historic", 10F);
-            label8.Location = new Point(13, 67);
-            label8.Name = "label8";
-            label8.Size = new Size(102, 19);
-            label8.TabIndex = 12;
-            label8.Text = "Árváltozás (%) :";
-            // 
-            // numPriceChange
-            // 
-            numPriceChange.Location = new Point(147, 70);
-            numPriceChange.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-            numPriceChange.Name = "numPriceChange";
-            numPriceChange.Size = new Size(125, 23);
-            numPriceChange.TabIndex = 11;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Historic", 10F);
-            label5.Location = new Point(13, 99);
-            label5.Name = "label5";
-            label5.Size = new Size(128, 19);
-            label5.TabIndex = 10;
-            label5.Text = "Mennyiségváltozás:";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI Historic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(900, 491);
-            label4.Name = "label4";
-            label4.Size = new Size(55, 20);
-            label4.TabIndex = 9;
-            label4.Text = "Napló";
-            label4.Click += label4_Click;
-            // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(900, 514);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(429, 169);
-            listBox1.TabIndex = 8;
-            // 
             // btnRemove
             // 
-            btnRemove.Location = new Point(605, 353);
+            btnRemove.Font = new Font("Segoe UI Historic", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnRemove.Location = new Point(389, 36);
             btnRemove.Name = "btnRemove";
-            btnRemove.Size = new Size(75, 31);
+            btnRemove.Size = new Size(27, 305);
             btnRemove.TabIndex = 7;
-            btnRemove.Text = "töröl";
+            btnRemove.Text = "<";
             btnRemove.UseVisualStyleBackColor = true;
             btnRemove.Click += btnRemove_Click;
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(373, 353);
+            btnAdd.Font = new Font("Segoe UI Historic", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAdd.Location = new Point(9, 36);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(75, 31);
+            btnAdd.Size = new Size(27, 305);
             btnAdd.TabIndex = 6;
-            btnAdd.Text = "hozzáad";
+            btnAdd.Text = ">";
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += btnAdd_Click;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI Historic", 10F);
+            label8.Location = new Point(431, 101);
+            label8.Name = "label8";
+            label8.Size = new Size(102, 19);
+            label8.TabIndex = 12;
+            label8.Text = "Árváltozás (%) :";
             // 
             // dgvMassUpdate
             // 
             dgvMassUpdate.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvMassUpdate.Location = new Point(373, 42);
+            dgvMassUpdate.Location = new Point(33, 36);
             dgvMassUpdate.Name = "dgvMassUpdate";
-            dgvMassUpdate.Size = new Size(307, 305);
+            dgvMassUpdate.Size = new Size(359, 305);
             dgvMassUpdate.TabIndex = 5;
             // 
             // btnSaveMassChanges
             // 
-            btnSaveMassChanges.Location = new Point(13, 197);
+            btnSaveMassChanges.Location = new Point(431, 231);
             btnSaveMassChanges.Name = "btnSaveMassChanges";
             btnSaveMassChanges.Size = new Size(259, 46);
             btnSaveMassChanges.TabIndex = 4;
@@ -317,9 +281,17 @@
             btnSaveMassChanges.UseVisualStyleBackColor = true;
             btnSaveMassChanges.Click += btnSaveMassChanges_Click;
             // 
+            // numPriceChange
+            // 
+            numPriceChange.Location = new Point(565, 104);
+            numPriceChange.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            numPriceChange.Name = "numPriceChange";
+            numPriceChange.Size = new Size(125, 23);
+            numPriceChange.TabIndex = 11;
+            // 
             // btnMassIncrease
             // 
-            btnMassIncrease.Location = new Point(13, 136);
+            btnMassIncrease.Location = new Point(431, 170);
             btnMassIncrease.Name = "btnMassIncrease";
             btnMassIncrease.Size = new Size(121, 37);
             btnMassIncrease.TabIndex = 3;
@@ -327,9 +299,19 @@
             btnMassIncrease.UseVisualStyleBackColor = true;
             btnMassIncrease.Click += btnMassIncrease_Click;
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Historic", 10F);
+            label5.Location = new Point(431, 133);
+            label5.Name = "label5";
+            label5.Size = new Size(128, 19);
+            label5.TabIndex = 10;
+            label5.Text = "Mennyiségváltozás:";
+            // 
             // btnMassDecrease
             // 
-            btnMassDecrease.Location = new Point(151, 136);
+            btnMassDecrease.Location = new Point(565, 170);
             btnMassDecrease.Name = "btnMassDecrease";
             btnMassDecrease.Size = new Size(121, 37);
             btnMassDecrease.TabIndex = 2;
@@ -343,7 +325,7 @@
             label3.Enabled = false;
             label3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label3.ForeColor = Color.Indigo;
-            label3.Location = new Point(13, 22);
+            label3.Location = new Point(431, 55);
             label3.Name = "label3";
             label3.Size = new Size(200, 25);
             label3.TabIndex = 0;
@@ -355,7 +337,7 @@
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(647, 503);
+            tabPage4.Size = new Size(739, 430);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Statisztika";
             tabPage4.UseVisualStyleBackColor = true;
@@ -388,6 +370,26 @@
             lblStatTitle.Size = new Size(331, 21);
             lblStatTitle.TabIndex = 0;
             lblStatTitle.Text = "Top 5 Leggyorsabban Fogyó Termék (Heti)";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI Historic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.Location = new Point(771, 486);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 20);
+            label4.TabIndex = 9;
+            label4.Text = "Napló";
+            label4.Click += label4_Click;
+            // 
+            // listBox1
+            // 
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 15;
+            listBox1.Location = new Point(771, 509);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(568, 169);
+            listBox1.TabIndex = 8;
             // 
             // txtSearch
             // 
@@ -467,8 +469,8 @@
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numQtyChange).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numPriceChange).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvMassUpdate).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numPriceChange).EndInit();
             tabPage4.ResumeLayout(false);
             pnlStatCard.ResumeLayout(false);
             pnlStatCard.PerformLayout();
