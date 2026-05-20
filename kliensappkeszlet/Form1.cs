@@ -8,7 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TheArtOfDevHtmlRenderer.Adapters;
+using Hotcakes.CommerceDTO;
+using Hotcakes.CommerceDTO.v1;
+using Hotcakes.CommerceDTO.v1.Client;
+using Hotcakes.CommerceDTO.v1.Catalog;
 
 
 
@@ -107,24 +112,33 @@ namespace kliensappkeszlet
             }
         }
 
+        private async Task FrissitTopListaBiztonsagosan()
+        {
+            try
+            {
+                await FrissitTopLista();
+            }
+            catch
+            {
+                lblTopProducts.Text = "A statisztika betöltése nem sikerült.";
+            }
+        }
+
 
         private void ApplyTheme()
         {
             // --- Központi színpaletta ---
-            Color baseBeige = Color.FromArgb(235, 230, 215);      // Form és alap háttér
-            Color headerBrown = Color.FromArgb(75, 54, 50);       // Sötétbarna (Fejlécek, Textboxok)
-            Color mauveButton = Color.FromArgb(154, 126, 141);    // Mályva (Gombok)
-            Color lightTextForDarkBg = Color.FromArgb(235, 225, 215); // Világos szöveg sötét háttérre
+            Color appBackground = Color.FromArgb(232, 226, 221);       // Világos, meleg szürkés-bézs háttér
+            Color headerBrown = Color.FromArgb(75, 54, 50);            // Sötétbarna (Fejlécek, Textboxok)
+            Color mauveButton = Color.FromArgb(154, 126, 141);         // Mályva (Gombok)
+            Color lightTextForDarkBg = Color.FromArgb(235, 225, 215);  // Világos szöveg sötét háttérre
 
-
-            this.BackColor = Color.AntiqueWhite;
-
+            this.BackColor = appBackground;
 
             ApplyDataGridViewTheme(dgvInventory);
             ApplyDataGridViewTheme(dgvMassUpdate);
 
-
-            ApplyStyleToAllControls(this, headerBrown, mauveButton, lightTextForDarkBg);
+            ApplyStyleToAllControls(this, headerBrown, mauveButton, lightTextForDarkBg, appBackground);
         }
 
         // Segédmetódus a táblázatok egységesítéséhez
@@ -132,13 +146,14 @@ namespace kliensappkeszlet
         {
             if (dgv == null) return;
 
-            Color baseBeige = Color.FromArgb(240, 240, 215);
-            Color altRowBeige = Color.FromArgb(225, 215, 205);
+            Color appBackground = Color.FromArgb(232, 226, 221);
+            Color baseBeige = Color.FromArgb(241, 236, 231);
+            Color altRowBeige = Color.FromArgb(234, 228, 222);
             Color gridLineColor = Color.FromArgb(205, 195, 185);
             Color selectionColor = Color.FromArgb(200, 180, 190);
             Color headerBrown = Color.FromArgb(75, 54, 50);
 
-            dgv.BackgroundColor = Color.AntiqueWhite;
+            dgv.BackgroundColor = appBackground;
             dgv.BorderStyle = BorderStyle.None;
             dgv.EnableHeadersVisualStyles = false; // Engedélyezi az egyedi fejlécszínt
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -151,11 +166,11 @@ namespace kliensappkeszlet
 
             // Sorok stílusa
             dgv.DefaultCellStyle.BackColor = baseBeige;
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = altRowBeige;
             dgv.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
             dgv.DefaultCellStyle.SelectionBackColor = selectionColor;
             dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9.5f);
-
 
             // Fejléc stílusa
             dgv.ColumnHeadersDefaultCellStyle.BackColor = headerBrown;
@@ -171,7 +186,7 @@ namespace kliensappkeszlet
         }
 
         // Rekurzív segédmetódus, ami minden elemen végigmegy
-        private void ApplyStyleToAllControls(Control container, Color darkBg, Color btnBg, Color lightText)
+        private void ApplyStyleToAllControls(Control container, Color darkBg, Color btnBg, Color lightText, Color appBackground)
         {
             foreach (Control c in container.Controls)
             {
@@ -207,11 +222,16 @@ namespace kliensappkeszlet
                     lbl.BackColor = Color.Transparent;
                     lbl.ForeColor = Color.FromArgb(60, 60, 60);
                 }
+                // Konténerek háttere
+                else if (c is Panel || c is GroupBox || c is TabPage || c is TabControl)
+                {
+                    c.BackColor = appBackground;
+                }
 
                 // Ha az adott elem egy Panel vagy GroupBox
                 if (c.HasChildren)
                 {
-                    ApplyStyleToAllControls(c, darkBg, btnBg, lightText);
+                    ApplyStyleToAllControls(c, darkBg, btnBg, lightText, appBackground);
                 }
             }
         }
@@ -250,11 +270,11 @@ namespace kliensappkeszlet
                                     ProductInfo = p
                                 }).ToList();
 
-                dgvInventory.DataSource = _displayList;
-                await FrissitTopLista();
+                _currentPage = 1;
+                FrissitDgvMegjelenites();
 
-                BeallitTablazatot();
-                EllenorizAlacsonyKeszletet();
+                // A statisztika ne lassítsa a terméklista megjelenését.
+                _ = FrissitTopListaBiztonsagosan();
             }
             catch (Exception ex)
             {
@@ -265,27 +285,22 @@ namespace kliensappkeszlet
                 this.Cursor = Cursors.Default;
                 btnLoad.Enabled = true;
             }
-            _currentPage = 1; // Vissza az elejére
-            FrissitDgvMegjelenites();
         }
 
         private void BeallitTablazatot()
         {
-
-
-
-
-
             // Rejtett azonosítók (a kódban elérhetõek, de a táblázatban nem látszanak)
             if (dgvInventory.Columns["InventoryBvin"] != null) dgvInventory.Columns["InventoryBvin"].Visible = false;
             if (dgvInventory.Columns["ProductBvin"] != null) dgvInventory.Columns["ProductBvin"].Visible = false;
             dgvInventory.Columns["Updatable"].Visible = false;
             dgvInventory.Columns["ProductInfo"].Visible = false;
+            dgvInventory.Columns["LowStockPoint"].Visible = false;
 
             if (dgvMassUpdate.Columns["InventoryBvin"] != null) dgvMassUpdate.Columns["InventoryBvin"].Visible = false;
             if (dgvMassUpdate.Columns["ProductBvin"] != null) dgvMassUpdate.Columns["ProductBvin"].Visible = false;
             dgvMassUpdate.Columns["Updatable"].Visible = false;
             dgvMassUpdate.Columns["ProductInfo"].Visible = false;
+            dgvInventory.Columns["LowStockPoint"].Visible = false;
 
             // Látható oszlopok beállítása
             dgvInventory.Columns["Sku"].HeaderText = "Cikkszám";
@@ -360,13 +375,13 @@ namespace kliensappkeszlet
                     bool invSuccess = await _hotcakes.UpdateInventoryAsync(item.InventoryBvin, item.ProductBvin, item.QuantityOnHand, item.LowStockPoint);
 
                     //  ár frissítése a termék végponton
-                    bool priceSuccess = await _hotcakes.UpdateProductPriceAsync(item.ProductInfo);
+                    bool priceSuccess = await _hotcakes.UpdateProductPriceAsync(item.ProductBvin, item.Price);
 
                     if (invSuccess && priceSuccess)
                     {
                         sikeres++;
                         item.Updatable = false;
-                        listBox1.Items.Add(DateTime.Now.ToLongDateString() + " " + item.ProductName + " adatai frissítve");
+                        listBox1.Items.Add(DateTime.Now.ToString("yyyy. MMMM dd. HH:mm") + " " + item.ProductName + " adatai frissítve");
                     }
                 }
 
@@ -447,10 +462,6 @@ namespace kliensappkeszlet
         private void Form1_Load(object sender, EventArgs e)
         {
             dgvMassUpdate.DataSource = _massUpdateList;
-
-
-
-
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -545,13 +556,13 @@ namespace kliensappkeszlet
                     bool invSuccess = await _hotcakes.UpdateInventoryAsync(item.InventoryBvin, item.ProductBvin, item.QuantityOnHand, item.LowStockPoint);
 
                     //  ár frissítése a termék végponton
-                    bool priceSuccess = await _hotcakes.UpdateProductPriceAsync(item.ProductInfo);
+                    bool priceSuccess = await _hotcakes.UpdateProductPriceAsync(item.ProductBvin, item.Price);
 
                     if (invSuccess && priceSuccess)
                     {
                         sikeres++;
                         item.Updatable = false;
-                        listBox1.Items.Add(DateTime.Now.ToLongDateString() + " " + item.ProductName + " adatai frissítve");
+                        listBox1.Items.Add(DateTime.Now.ToString("yyyy. MMMM dd. HH:mm") + " " + item.ProductName + " adatai frissítve");
                     }
                 }
                 MessageBox.Show($"Kész! {sikeres} termék adatai frissítve.", "Sikeres mentés", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -568,25 +579,10 @@ namespace kliensappkeszlet
             }
         }
 
-        private async void btnNext_Click(object sender, EventArgs e)
+        private void btnNext_Click(object sender, EventArgs e)
         {
             _currentPage++;
-
-
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                var products = await _hotcakes.GetAllProductsAsync(_currentPage, _pageSize);
-                var inventory = await _hotcakes.GetAllInventoryAsync();
-
-
-
-                FrissitDgvMegjelenites();
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
+            FrissitDgvMegjelenites();
         }
 
         private void btnPrev_Click(object sender, EventArgs e)
@@ -604,6 +600,11 @@ namespace kliensappkeszlet
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
         {
 
         }
@@ -705,7 +706,7 @@ namespace kliensappkeszlet
         public string Keywords { get; set; }
         public string PreContentColumnId { get; set; }
         public string PostContentColumnId { get; set; }
-        
+
     }
 
     // --- API SZERVIZ ---
@@ -723,29 +724,110 @@ namespace kliensappkeszlet
             return JsonConvert.DeserializeObject<HotcakesInventoryResponse>(json)?.Content ?? new List<InventoryInfo>();
         }
 
-        public async Task<bool> UpdateProductPriceAsync(ProductInfo pinfo)
+        public async Task<bool> UpdateProductPriceAsync(string productBvin, decimal newPrice)
         {
-            
-            var data = new { Bvin = pinfo.Bvin, Sku=pinfo.Sku, ProductName = pinfo.ProductName, SitePrice = pinfo.SitePrice, StoreId = 1 };
-            var json = JsonConvert.SerializeObject(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            if (string.IsNullOrWhiteSpace(productBvin))
+                throw new Exception("Hiányzik a termék Bvin az ár módosításához.");
 
-            var res = await _client.PostAsync($"{_baseUrl}products?key={_apiKey}", content);
-            return res.IsSuccessStatusCode;
+            string encodedBvin = Uri.EscapeDataString(productBvin);
+
+            //  Teljes termék lekérése egy termék végpontról
+            var getRes = await _client.GetAsync($"{_baseUrl}products/{encodedBvin}?key={_apiKey}");
+            var getJson = await getRes.Content.ReadAsStringAsync();
+
+            if (!getRes.IsSuccessStatusCode)
+            {
+                throw new Exception(
+                    $"Termék lekérése sikertelen: {(int)getRes.StatusCode} {getRes.ReasonPhrase}\n{getJson}"
+                );
+            }
+
+            JObject wrapper;
+            try
+            {
+                wrapper = JObject.Parse(getJson);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("A termék lekérés válasza nem érvényes JSON.\n" + ex.Message + "\n" + getJson);
+            }
+
+            var getErrors = wrapper["Errors"] as JArray;
+            if (getErrors != null && getErrors.Count > 0)
+            {
+                throw new Exception("Termék lekérési API hiba: " + getErrors.ToString(Formatting.None));
+            }
+
+            //  nem az egész wrapper megy vissza, csak a Content objektum
+            var product = wrapper["Content"] as JObject;
+
+            if (product == null)
+                throw new Exception("A termék válaszban nincs Content objektum.");
+
+            string realBvin = product["Bvin"]?.ToString();
+
+            if (string.IsNullOrWhiteSpace(realBvin))
+                throw new Exception("A lekért termékben nincs Bvin mezõ.");
+
+            if (!string.Equals(realBvin, productBvin, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception(
+                    $"Biztonsági hiba: a lekért termék Bvin-je nem egyezik a módosítani kívánt termékkel. Kért: {productBvin}, kapott: {realBvin}"
+                );
+            }
+
+            //  Csakis az ár módosítása
+            product["SitePrice"] = newPrice;
+
+            //  Csak a termékobjektum nem pedig az egész wrapper
+            string postJson = product.ToString(Formatting.None);
+            var content = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            string encodedRealBvin = Uri.EscapeDataString(realBvin);
+
+            //  konkrét termék update végpont
+            var postRes = await _client.PostAsync($"{_baseUrl}products/{encodedRealBvin}?key={_apiKey}", content);
+            var postBody = await postRes.Content.ReadAsStringAsync();
+
+            if (!postRes.IsSuccessStatusCode)
+            {
+                throw new Exception(
+                    $"Termék ár mentése sikertelen: {(int)postRes.StatusCode} {postRes.ReasonPhrase}\n{postBody}\n\nElküldött JSON:\n{postJson}"
+                );
+            }
+
+            JObject postWrapper;
+            try
+            {
+                postWrapper = JObject.Parse(postBody);
+            }
+            catch
+            {
+                // ha a szerver sikeres státuszt adott de a válasz nem JSON akkor is elfogadja
+                return true;
+            }
+
+            var postErrors = postWrapper["Errors"] as JArray;
+            if (postErrors != null && postErrors.Count > 0)
+            {
+                throw new Exception("Termék ár mentési API hiba: " + postErrors.ToString(Formatting.None));
+            }
+
+            return true;
         }
 
 
 
-        public async Task<List<ProductInfo>> GetAllProductsAsync(int page=1, int size=999)
+        public async Task<List<ProductInfo>> GetAllProductsAsync(int page = 1, int size = 999)
         {
             var res = await _client.GetAsync($"{_baseUrl}products?key={_apiKey}&page={page}&size={size}");
             var json = await res.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<HotcakesProductResponse>(json)?.Content?.Products ?? new List<ProductInfo>();
         }
 
-        public async Task<bool> UpdateInventoryAsync(string inventoryBvin,string productBvin, int qty, int lowStock)
+        public async Task<bool> UpdateInventoryAsync(string inventoryBvin, string productBvin, int qty, int lowStock)
         {
-            var data = new { Bvin = inventoryBvin, ProductBvin= productBvin, QuantityOnHand = qty, LowStockPoint = lowStock };
+            var data = new { Bvin = inventoryBvin, ProductBvin = productBvin, QuantityOnHand = qty, LowStockPoint = lowStock };
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var res = await _client.PostAsync($"{_baseUrl}productinventory?key={_apiKey}", content);
@@ -758,7 +840,7 @@ namespace kliensappkeszlet
             {
                 var res = await _client.GetAsync($"{_baseUrl}orders?key={_apiKey}");
                 var json = await res.Content.ReadAsStringAsync();
-                
+
                 return JsonConvert.DeserializeObject<HotcakesOrderResponse>(json)?.Content ?? new List<OrderInfo>();
             }
             catch { return new List<OrderInfo>(); }

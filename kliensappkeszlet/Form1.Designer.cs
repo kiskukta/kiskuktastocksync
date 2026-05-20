@@ -77,7 +77,7 @@
             // 
             // btnLoad
             // 
-            btnLoad.Location = new Point(470, 1);
+            btnLoad.Location = new Point(487, 5);
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new Size(89, 23);
             btnLoad.TabIndex = 0;
@@ -98,9 +98,9 @@
             // dgvInventory
             // 
             dgvInventory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvInventory.Location = new Point(26, 30);
+            dgvInventory.Location = new Point(5, 32);
             dgvInventory.Name = "dgvInventory";
-            dgvInventory.Size = new Size(735, 493);
+            dgvInventory.Size = new Size(571, 370);
             dgvInventory.TabIndex = 2;
             dgvInventory.SelectionChanged += dgvInventory_SelectionChanged;
             // 
@@ -138,10 +138,10 @@
             Készletek.Controls.Add(tabPage4);
             Készletek.Font = new Font("Segoe UI Historic", 9F);
             Készletek.ImeMode = ImeMode.Katakana;
-            Készletek.Location = new Point(767, 30);
+            Készletek.Location = new Point(591, 5);
             Készletek.Name = "Készletek";
             Készletek.SelectedIndex = 0;
-            Készletek.Size = new Size(747, 458);
+            Készletek.Size = new Size(705, 397);
             Készletek.TabIndex = 6;
             // 
             // tabPage1
@@ -159,7 +159,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(739, 430);
+            tabPage1.Size = new Size(697, 588);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Egyedi készlet/ár";
             // 
@@ -218,10 +218,11 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(739, 430);
+            tabPage2.Size = new Size(697, 369);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Csoportos készlet/ár";
             tabPage2.UseVisualStyleBackColor = true;
+            tabPage2.Click += tabPage2_Click;
             // 
             // numQtyChange
             // 
@@ -337,7 +338,7 @@
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(739, 430);
+            tabPage4.Size = new Size(697, 588);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Statisztika";
             tabPage4.UseVisualStyleBackColor = true;
@@ -349,7 +350,7 @@
             pnlStatCard.Controls.Add(lblStatTitle);
             pnlStatCard.Location = new Point(33, 87);
             pnlStatCard.Name = "pnlStatCard";
-            pnlStatCard.Size = new Size(430, 295);
+            pnlStatCard.Size = new Size(624, 325);
             pnlStatCard.TabIndex = 0;
             // 
             // lblTopProducts
@@ -375,7 +376,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI Historic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(771, 486);
+            label4.Location = new Point(591, 402);
             label4.Name = "label4";
             label4.Size = new Size(55, 20);
             label4.TabIndex = 9;
@@ -386,14 +387,14 @@
             // 
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(771, 509);
+            listBox1.Location = new Point(591, 425);
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(568, 169);
             listBox1.TabIndex = 8;
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(138, 1);
+            txtSearch.Location = new Point(117, 3);
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(142, 23);
             txtSearch.TabIndex = 7;
@@ -405,7 +406,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label2.ForeColor = Color.Indigo;
-            label2.Location = new Point(26, -1);
+            label2.Location = new Point(5, 1);
             label2.Name = "label2";
             label2.Size = new Size(112, 25);
             label2.TabIndex = 8;
@@ -413,7 +414,7 @@
             // 
             // btnPrev
             // 
-            btnPrev.Location = new Point(122, 529);
+            btnPrev.Location = new Point(103, 400);
             btnPrev.Name = "btnPrev";
             btnPrev.Size = new Size(79, 28);
             btnPrev.TabIndex = 9;
@@ -423,7 +424,7 @@
             // 
             // btnNext
             // 
-            btnNext.Location = new Point(197, 529);
+            btnNext.Location = new Point(178, 400);
             btnNext.Name = "btnNext";
             btnNext.Size = new Size(79, 28);
             btnNext.TabIndex = 10;
@@ -436,7 +437,7 @@
             lblPageInfo.AutoSize = true;
             lblPageInfo.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             lblPageInfo.ForeColor = Color.Indigo;
-            lblPageInfo.Location = new Point(26, 534);
+            lblPageInfo.Location = new Point(7, 405);
             lblPageInfo.Name = "lblPageInfo";
             lblPageInfo.Size = new Size(57, 17);
             lblPageInfo.TabIndex = 11;
@@ -447,7 +448,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1580, 690);
+            ClientSize = new Size(1300, 596);
             Controls.Add(lblPageInfo);
             Controls.Add(btnNext);
             Controls.Add(btnPrev);

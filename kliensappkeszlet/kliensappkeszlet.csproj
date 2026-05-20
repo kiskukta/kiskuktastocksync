@@ -13,4 +13,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Hotcakes.CommerceDTO">
+      <HintPath>..\..\..\..\Downloads\DevSamples\DevSamples\References\Hotcakes.CommerceDTO.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
