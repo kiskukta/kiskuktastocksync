@@ -159,7 +159,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(697, 588);
+            tabPage1.Size = new Size(697, 369);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Egyedi készlet/ár";
             // 
@@ -338,7 +338,7 @@
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(697, 588);
+            tabPage4.Size = new Size(697, 369);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Statisztika";
             tabPage4.UseVisualStyleBackColor = true;
@@ -460,7 +460,7 @@
             Controls.Add(dgvInventory);
             Controls.Add(btnLoad);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Kliensapp";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
             Készletek.ResumeLayout(false);
